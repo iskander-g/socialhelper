@@ -11,7 +11,6 @@ class SocialHelper
     // returns JSONP string like VK.Share.count(1234, 1664);. First argument - index, second - shares count
     const VK_SHARES_COUNT_URL = 'https://vk.com/share.php?act=count&index=1234&url=%1$s';
     const VK_REGEXP = '/VK\.Share\.count\([0-9]+, ([0-9]+)\)\;/is';
-    const VK_SHARE_URL = 'http://vk.com/share.php?url=%1$s&noparse=%2$s&title=%3$s&image=%4$s';
     const VK_LIGHT_SHARE_URL = 'http://vk.com/share.php?url=%1$s';
 
     // OK.ru
