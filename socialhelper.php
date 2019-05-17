@@ -30,8 +30,6 @@ class SocialHelper
 
     const POCKET_SHARE_URL = 'https://getpocket.com/save?url=%1$s';
 
-    static $workingProxy;
-
     /**
      * Creates a sharing URL for Twitter
      *
@@ -71,34 +69,6 @@ class SocialHelper
         $fbUrl = sprintf(self::FB_SHARES_COUNT_URL, urlencode($url));
         $data = file_get_contents($fbUrl);
 
-        if (!$data) {
-            $i = 0;
-            $headers = array("X-Requested-With: XMLHttpRequest",
-                "User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1",
-                "Referer:$url");
-
-            while (!$data && $i < 15) {
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $fbUrl);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
-                curl_setopt($ch, CURLOPT_PROXY, self::$workingProxy);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-
-                $data = curl_exec($ch);
-                curl_close($ch);
-
-                if (strpos($data, "Application request limit reached")) {
-                    $data = false;
-                }
-
-                if (!$data) {
-                    $i++;
-                    self::$workingProxy = ProxyServer::getWorkingProxy();
-                }
-            }
-        }
         try {
             $data = json_decode($data);
 
@@ -114,21 +84,12 @@ class SocialHelper
      * Creates a sharing URL for Vk.com
      *
      * @param string $url URL you want to share
-     * @param string $noparse Send true or 'true' if you want to send custom title, desc and image
-     * @param string $title Title of the post
-     * @param string $desc Description of the URL
-     * @param string $image URL of an image you want to add to post
      *
      * @return string
      */
-    public static function getVkShareUrl($url, $noparse = 'false', $title = null , $desc = null, $image = null)
+    public static function getVkShareUrl($url)
     {
-        if ($noparse === true || $noparse == 'true') {
-            $noparse = 'true';
-            return sprintf(self::VK_SHARE_URL, urlencode($url), $noparse, $title, $image);
-        } else {
-            return sprintf(self::VK_LIGHT_SHARE_URL, urlencode($url));
-        }
+        return sprintf(self::VK_LIGHT_SHARE_URL, urlencode($url));
     }
 
     /**
